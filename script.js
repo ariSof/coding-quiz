@@ -21,23 +21,58 @@ var timeEl = document.createElement("div");
 var timeLeft =30;
 var answersList = document.createElement("ol");
 
+function quizIsOver() {
+    //Show all done page with final score (aka time left)
+    //Ask for initials
+}
+
+//Starts the timer and decreases every second
 function startTime() {
     // Sets interval in variable
     var timerInterval = setInterval(function() {
       timeLeft--;
       timeEl.textContent = "Time: " + timeLeft;
   
-      if(timeLeft === 0) {
+      if(timeLeft <= 0) {
         // Stops execution of action at set interval
         clearInterval(timerInterval);
+        quizIsOver();
       }
       document.body.insertBefore(timeEl, quizSpace);
   
     }, 1000);
-  }
+}
 
+//Shows question 2 of the quiz
+function showQuestion2(){
+    if(timeLeft>0){
+        var questionTag = document.createElement("h1");
+        questionTag.textContent = question2;
+    
+        quizSpace.textContent = '';
+        quizSpace.appendChild(questionTag);
+        
+        answersList.textContent = '';
+        answersList.setAttribute("id", "answerList");
+    
+        for(var i=0; i<4; i++){
+            var listItem = document.createElement('li');
+            listItem.setAttribute("id", i);
+    
+            if(i === q2ans){
+                listItem.setAttribute("is-answer", true);
+            } else {
+                listItem.setAttribute("is-answer", false);
+            }
+    
+            listItem.textContent = answers2[i];
+            answersList.appendChild(listItem);
+            quizSpace.appendChild(answersList);
+        }
+    }
+}
 
-
+//Start Quiz button listener, for when quiz page first loads
 startButton.addEventListener("click", function(event){
     event.preventDefault();
 
@@ -67,22 +102,30 @@ startButton.addEventListener("click", function(event){
     }
 });
 
+//Listener for quiz answers added to Order List parent
 answersList.addEventListener("click", function(event) {
+    event.preventDefault();
     var element = event.target;
   
     if(element.matches("li")){
       var isAnswer = element.getAttribute("is-answer");
       console.log("answer is?=" + isAnswer);
-    //   var viewState = element.getAttribute("data-number");
   
       if(isAnswer === "true"){
         //Display Correct, Call next question
         console.log("Correct!");
-        //showQuestion2();
-  
+
+        if(timeLeft > 0) {
+            showQuestion2();
+        } else {
+            quizIsOver();
+        }
       }
       else {
         //Take 10sec away from time, display Incorrect
+        if(timeLeft !== 0) {
+            timeLeft = timeLeft - 10;
+        }
         console.log("Incorrect...");
       }
     }
