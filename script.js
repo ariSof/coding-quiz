@@ -17,22 +17,53 @@ var question5 = "A very useful tool used during development and debugging for pr
 var answers5 = ["JavaScript", "terminal/bash", "for loops", "console.log"];
 var q5ans = 3;
 var currentQuestion = 0;
+var isQuizzOver = false;
 
+//initialize tags for questions and list of answers
 var timeEl = document.createElement("div");
 var timeLeft =30;
 var answersList = document.createElement("ol");
 
-function quizIsOver() {
-    //Show all done page with final score (aka time left)
-    //Ask for initials
+//Initialize quiz is over initials input
+var overText = document.createElement("h1");
+var showScore = document.createElement("p");
+//var inputGroup = document.createElement('div');
+var initialsLabel = document.createElement('label');
+var initialsInput = document.createElement('input');
+var saveButton = document.createElement('button');
+
+//Show all done page with final score (aka time left)
+//Ask for initials
+function quizIsOver() {    
+    isQuizzOver = true;
+    timeEl.textContent = '';
+    overText.textContent = "All done!";
+    showScore.textContent = "Your final score is: " + timeLeft;    
+    initialsLabel.textContent = "Enter your initials:";
+    initialsInput.setAttribute("id", "initials");
+    saveButton.textContent = "Save";
+
+    quizSpace.textContent = '';
+    quizSpace.appendChild(overText);
+    quizSpace.appendChild(showScore);
+    quizSpace.appendChild(initialsLabel);
+    quizSpace.appendChild(initialsInput);
+    quizSpace.appendChild(saveButton);
 }
+
+//listener for Save initials button
+// saveButton.addEventListener("click", function(event){
+//     //save initials to local storage and display High Scores
+// };)
 
 //Starts the timer and decreases every second
 function startTime() {
     // Sets interval in variable
     var timerInterval = setInterval(function() {
       timeLeft--;
+      if(!isQuizzOver) {
       timeEl.textContent = "Time: " + timeLeft;
+      }
   
       if(timeLeft <= 0) {
         // Stops execution of action at set interval
@@ -44,6 +75,8 @@ function startTime() {
     }, 1000);
 }
 
+// The next three functions return the local variables that correspond
+// to each question, its answer and answer options 
 function getNextQuestion()  {
     var displayQuestion = currentQuestion;
 
@@ -123,6 +156,7 @@ function showNextQuestion(){
 }
 
 //Start Quiz button listener, for when quiz page first loads
+//Shows the first question and starts the Timer
 startButton.addEventListener("click", function(event){
     event.preventDefault();
 
@@ -153,7 +187,7 @@ startButton.addEventListener("click", function(event){
     }
 });
 
-//Listener for quiz answers added to Order List parent
+//Listener for quiz answer selected (added to Order List parent)
 answersList.addEventListener("click", function(event) {
     event.preventDefault();
     var element = event.target;
@@ -174,9 +208,12 @@ answersList.addEventListener("click", function(event) {
       }
       else {
         //Take 10sec away from time, display Incorrect
-        if(timeLeft !== 0) {
+        if(timeLeft !== 0 && timeLeft > 10) {
             timeLeft = timeLeft - 10;
+        } else {
+            quizIsOver();
         }
+
         console.log("Incorrect...");
       }
     }
