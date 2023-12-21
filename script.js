@@ -16,6 +16,7 @@ var q4ans = 2;
 var question5 = "A very useful tool used during development and debugging for printing content to the debugger is:";
 var answers5 = ["JavaScript", "terminal/bash", "for loops", "console.log"];
 var q5ans = 3;
+var currentQuestion = 0;
 
 var timeEl = document.createElement("div");
 var timeLeft =30;
@@ -43,32 +44,81 @@ function startTime() {
     }, 1000);
 }
 
-//Shows question 2 of the quiz
-function showQuestion2(){
+function getNextQuestion()  {
+    var displayQuestion = currentQuestion;
+
+    if(displayQuestion == 2){
+        return question2;
+    } else if (displayQuestion == 3) {
+        return question3;
+    } else if (displayQuestion == 4) {
+        return question4;
+    } else if (displayQuestion == 5) {
+        return question5;
+    } else {
+        quizIsOver();
+    }
+}
+
+function getAnswer() {
+    if(currentQuestion == 2){
+        return q2ans;
+    } else if(currentQuestion == 3){
+        return q3ans;
+    } else if(currentQuestion == 4){
+        return q4ans;
+    } else if(currentQuestion == 5){
+        return q5ans;
+    }
+}
+
+function getAnswersArray() {
+    if(currentQuestion == 2) {
+        return answers2;
+    } else if(currentQuestion == 3) {
+        return answers3;
+    } else if(currentQuestion == 4) {
+        return answers4;
+    } else if(currentQuestion == 5) {
+        return answers5;
+    }
+}
+
+//Shows next question of the quiz
+function showNextQuestion(){
     if(timeLeft>0){
+        currentQuestion = currentQuestion + 1;
+
+        if(currentQuestion < 6) {
         var questionTag = document.createElement("h1");
-        questionTag.textContent = question2;
+
+        questionTag.textContent = getNextQuestion();
     
         quizSpace.textContent = '';
         quizSpace.appendChild(questionTag);
         
         answersList.textContent = '';
         answersList.setAttribute("id", "answerList");
+        var theCorrectAnswer = getAnswer();
+        var answersArray = getAnswersArray();
     
         for(var i=0; i<4; i++){
             var listItem = document.createElement('li');
             listItem.setAttribute("id", i);
     
-            if(i === q2ans){
+            if(i === theCorrectAnswer){
                 listItem.setAttribute("is-answer", true);
             } else {
                 listItem.setAttribute("is-answer", false);
             }
     
-            listItem.textContent = answers2[i];
+            listItem.textContent = answersArray[i];
             answersList.appendChild(listItem);
             quizSpace.appendChild(answersList);
         }
+    } else {
+        quizIsOver();
+    }
     }
 }
 
@@ -77,6 +127,7 @@ startButton.addEventListener("click", function(event){
     event.preventDefault();
 
     startTime();
+    currentQuestion = 1;
 
     var questionTag = document.createElement("h1");
     questionTag.textContent = question1;
@@ -116,7 +167,7 @@ answersList.addEventListener("click", function(event) {
         console.log("Correct!");
 
         if(timeLeft > 0) {
-            showQuestion2();
+            showNextQuestion();
         } else {
             quizIsOver();
         }
