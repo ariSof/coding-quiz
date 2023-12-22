@@ -16,10 +16,10 @@ https://arisof.github.io/coding-quiz/
 
  Screenshots attached:
 
-![Screenshot to start quiz](./images/startQuiz.png)
-![Screenshot to a question in quiz](./images/aQuestion.png)
-![Screenshot to quiz is done](./images/quizDone.png)
-![Screenshot to high scores](./images/highScores.png)
+![Screenshot to start quiz](./assets/images/startQuiz.png)
+![Screenshot to a question in quiz](./assets/images/aQuestion.png)
+![Screenshot to quiz is done](./assets/images/quizDone.png)
+![Screenshot to high scores](./assets/images/highScores.png)
 
 
 ## Credits
