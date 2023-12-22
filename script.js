@@ -1,5 +1,7 @@
+var timeEl = document.querySelector("#timer"); //timer
 var startButton = document.querySelector("#startBtn");
 var quizSpace = document.querySelector("#quiz");
+var timeLeft = 50;
 
 var question1 = "Commonly used data types DO Not Include:";
 var answers1 = ["strings", "booleans", "alerts", "numbers"];
@@ -18,10 +20,10 @@ var answers5 = ["JavaScript", "terminal/bash", "for loops", "console.log"];
 var q5ans = 3;
 var currentQuestion = 0;
 var isQuizzOver = false;
+//var addLine = document.createElement("hr");
+var isRight = document.querySelector("#is-right");
 
 //initialize tags for questions and list of answers
-var timeEl = document.createElement("div");
-var timeLeft =30;
 var answersList = document.createElement("ol");
 
 //Initialize quiz is over initials input
@@ -64,6 +66,7 @@ function quizIsOver() {
 function renderHighScores(){
 
     quizSpace.textContent = '';
+    isRight.textContent = '';
     highScoreTxt.textContent = "High Scores";
     quizSpace.appendChild(highScoreTxt);
 
@@ -71,9 +74,6 @@ function renderHighScores(){
     
     for(var i=0; i<highScores.length-1; i=i+2) {
         scoreListItem.textContent = highScores[i] + "-" + highScores[i+1];
-        console.log(highScores[i]);
-        console.log(highScores[i+1]);
-        console.log("i="+i);
 
         listOfScores.appendChild(scoreListItem);
         quizSpace.appendChild(listOfScores);
@@ -88,7 +88,7 @@ function renderHighScores(){
 
 startOverBtn.addEventListener("click", function(event){
     isQuizzOver = false;
-    timeLeft =30;
+    timeLeft = 50;
     firstQuestion();
 });
 
@@ -256,11 +256,10 @@ answersList.addEventListener("click", function(event) {
   
     if(element.matches("li")){
       var isAnswer = element.getAttribute("is-answer");
-      console.log("answer is?=" + isAnswer);
-  
+     
       if(isAnswer === "true"){
         //Display Correct, Call next question
-        console.log("Correct!");
+        isRight.textContent = "Correct!";
 
         if(timeLeft > 0) {
             showNextQuestion();
@@ -269,14 +268,13 @@ answersList.addEventListener("click", function(event) {
         }
       }
       else {
+        isRight.textContent = "Incorrect...";
         //Take 10sec away from time, display Incorrect
         if(timeLeft !== 0 && timeLeft > 10) {
             timeLeft = timeLeft - 10;
         } else {
             quizIsOver();
         }
-
-        console.log("Incorrect...");
       }
     }
   });

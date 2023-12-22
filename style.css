@@ -1,7 +1,19 @@
 ol li {
   background-color: aqua;
   margin: 5px;
-  font-size: 10px;
-  width: 6vw;
+  font-size: 15px;
+  width: 10vw;
   padding-top: 3px;
+}
+
+#timer {
+    height: 15px;
+}
+
+#answerList:hover {
+cursor: pointer;
+}
+
+#is-right {
+    font-style: italic;
 }
