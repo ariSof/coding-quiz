@@ -27,18 +27,28 @@ var answersList = document.createElement("ol");
 //Initialize quiz is over initials input
 var overText = document.createElement("h1");
 var showScore = document.createElement("p");
-//var inputGroup = document.createElement('div');
 var initialsLabel = document.createElement('label');
 var initialsInput = document.createElement('input');
 var saveButton = document.createElement('button');
+var score = 100;
+
+//Initialize high scores view
+var highScoreTxt = document.createElement("h1");
+var listOfScores = document.createElement("ol");
+var startOverBtn = document.createElement("button");
+var clearScoresBtn = document.createElement("button");
+
+//Initialize local storage variables
+var highScores = [];
 
 //Show all done page with final score (aka time left)
 //Ask for initials
 function quizIsOver() {    
     isQuizzOver = true;
+    score = timeLeft;
     timeEl.textContent = '';
     overText.textContent = "All done!";
-    showScore.textContent = "Your final score is: " + timeLeft;    
+    showScore.textContent = "Your final score is: " + score;    
     initialsLabel.textContent = "Enter your initials:";
     initialsInput.setAttribute("id", "initials");
     saveButton.textContent = "Save";
@@ -51,10 +61,57 @@ function quizIsOver() {
     quizSpace.appendChild(saveButton);
 }
 
+function renderHighScores(){
+
+    quizSpace.textContent = '';
+    highScoreTxt.textContent = "High Scores";
+    quizSpace.appendChild(highScoreTxt);
+
+    var scoreListItem = document.createElement('li');
+    
+    for(var i=0; i<highScores.length-1; i=i+2) {
+        scoreListItem.textContent = highScores[i] + "-" + highScores[i+1];
+        console.log(highScores[i]);
+        console.log(highScores[i+1]);
+        console.log("i="+i);
+
+        listOfScores.appendChild(scoreListItem);
+        quizSpace.appendChild(listOfScores);
+    }
+
+    //Render buttons
+    startOverBtn.textContent = "Start Over";
+    clearScoresBtn.textContent = "Clear Scores"
+    quizSpace.appendChild(startOverBtn);
+    quizSpace.appendChild(clearScoresBtn);
+}
+
+startOverBtn.addEventListener("click", function(event){
+    isQuizzOver = false;
+    timeLeft =30;
+    firstQuestion();
+});
+
+clearScoresBtn.addEventListener("click", function(event){
+    highScores = [];
+    localStorage.setItem("highScores", JSON.stringify(highScores));
+
+    listOfScores.textContent = "";
+
+    renderHighScores();
+});
+
 //listener for Save initials button
-// saveButton.addEventListener("click", function(event){
+saveButton.addEventListener("click", function(event){
 //     //save initials to local storage and display High Scores
-// };)
+    var initialsText = initialsInput.value.trim();
+    highScores.push(initialsText);
+    highScores.push(score);
+    initialsInput.value = "";
+    localStorage.setItem("highScores", JSON.stringify(highScores));
+    
+    renderHighScores();
+ });
 
 //Starts the timer and decreases every second
 function startTime() {
@@ -62,10 +119,10 @@ function startTime() {
     var timerInterval = setInterval(function() {
       timeLeft--;
       if(!isQuizzOver) {
-      timeEl.textContent = "Time: " + timeLeft;
+        timeEl.textContent = "Time: " + timeLeft;
       }
   
-      if(timeLeft <= 0) {
+      if(timeLeft <= 0 || isQuizzOver) {
         // Stops execution of action at set interval
         clearInterval(timerInterval);
         quizIsOver();
@@ -122,44 +179,40 @@ function showNextQuestion(){
     if(timeLeft>0){
         currentQuestion = currentQuestion + 1;
 
-        if(currentQuestion < 6) {
-        var questionTag = document.createElement("h1");
+        if (currentQuestion < 6) {
+            var questionTag = document.createElement("h1");
 
-        questionTag.textContent = getNextQuestion();
-    
-        quizSpace.textContent = '';
-        quizSpace.appendChild(questionTag);
-        
-        answersList.textContent = '';
-        answersList.setAttribute("id", "answerList");
-        var theCorrectAnswer = getAnswer();
-        var answersArray = getAnswersArray();
-    
-        for(var i=0; i<4; i++){
-            var listItem = document.createElement('li');
-            listItem.setAttribute("id", i);
-    
-            if(i === theCorrectAnswer){
-                listItem.setAttribute("is-answer", true);
-            } else {
-                listItem.setAttribute("is-answer", false);
+            questionTag.textContent = getNextQuestion();
+
+            quizSpace.textContent = '';
+            quizSpace.appendChild(questionTag);
+
+            answersList.textContent = '';
+            answersList.setAttribute("id", "answerList");
+            var theCorrectAnswer = getAnswer();
+            var answersArray = getAnswersArray();
+
+            for (var i = 0; i < 4; i++) {
+                var listItem = document.createElement('li');
+                listItem.setAttribute("id", i);
+
+                if (i === theCorrectAnswer) {
+                    listItem.setAttribute("is-answer", true);
+                } else {
+                    listItem.setAttribute("is-answer", false);
+                }
+
+                listItem.textContent = answersArray[i];
+                answersList.appendChild(listItem);
+                quizSpace.appendChild(answersList);
             }
-    
-            listItem.textContent = answersArray[i];
-            answersList.appendChild(listItem);
-            quizSpace.appendChild(answersList);
+        } else {
+            quizIsOver();
         }
-    } else {
-        quizIsOver();
-    }
     }
 }
 
-//Start Quiz button listener, for when quiz page first loads
-//Shows the first question and starts the Timer
-startButton.addEventListener("click", function(event){
-    event.preventDefault();
-
+function firstQuestion(){
     startTime();
     currentQuestion = 1;
 
@@ -169,6 +222,7 @@ startButton.addEventListener("click", function(event){
     quizSpace.textContent = '';
     quizSpace.appendChild(questionTag);
     
+    answersList.textContent = '';
     answersList.setAttribute("id", "answerList");
 
     for(var i=0; i<4; i++){
@@ -185,6 +239,14 @@ startButton.addEventListener("click", function(event){
         answersList.appendChild(listItem);
         quizSpace.appendChild(answersList);
     }
+}
+
+//Start Quiz button listener, for when quiz page first loads
+//Shows the first question and starts the Timer
+startButton.addEventListener("click", function(event){
+    event.preventDefault();
+
+    firstQuestion();
 });
 
 //Listener for quiz answer selected (added to Order List parent)
